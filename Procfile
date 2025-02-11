@@ -1,1 +1,1 @@
-web: gunicorn PC-ASM-Quote-00.wsgi
+web: gunicorn computer-part.wsgi
