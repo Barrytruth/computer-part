@@ -1,1 +1,1 @@
-web: gunicorn computer-part.wsgi
+web: gunicorn pcASMqtMain.wsgi
