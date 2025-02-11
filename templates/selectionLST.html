@@ -1,0 +1,180 @@
+<div class="simple-page-container">
+    <h2 style="text-align: center;">零組件選擇清單</h2>
+    
+    <table id="selectionTable">
+        <thead>
+            <tr>
+                <th class="col-store">店家</th>
+                <th class="col-category">分類</th>
+                <th class="col-description">商品敘述</th>
+                <th class="col-price-sale">售價</th>
+                <th class="col-actions">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- AJAX 載入數據 -->
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" style="text-align: right; padding-right: 1em;">總金額</td>
+                <td id="total-price" style="text-align: right; padding-right: 1em;">0</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- 說明文字 -->
+    <p>上移 (↑)、下移 (↓) 或 刪除 (X) 按鍵可以移動或刪除品項</p>
+    <p>勾選的品項會被加總到下方總金額欄</p>
+
+    <button class="btn btn-clear" onclick="clearSelection()" style="display: block; margin: 10px auto;">清除</button>
+</div>
+
+<style>
+    .col-store { width: 4%; }
+    .col-category { width: 7%; }
+    th.col-description {text-align: center;}
+    .col-description { width: 75%; text-align: left; padding-left: 1em; }
+    th.col-price-sale {text-align: center;}
+    .col-price-sale { width: 4%; text-align: right; padding-right: 1em; }
+    .col-actions { width: 10%; text-align: center; }
+
+    .btn {
+        padding: 5px 10px;
+        margin: 2px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+    
+        background-image: url('/staticfiles/images/button_02.jpg'); /* 預設按鈕背景，也就是沒有單獨設定的按鈕都使用這個底圖 */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    
+        color: white;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* 讓文字有陰影，提高可讀性 */
+    }
+    
+    /* "清除" 按鈕 */
+    .btn-clear {
+        padding: 8px 16px;
+        background-image: url('/staticfiles/images/button_03.jpg'); /* 設定清除按鈕背景，這就是上面說的"單獨設定的按鈕" */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    
+    /* 滑鼠懸停時的效果 */
+    .btn:hover, .btn-clear:hover {
+        opacity: 0.8;  /* 讓按鈕稍微變暗 */
+    }
+</style>
+
+<script>
+    function loadSelectedItems() {
+        fetch('/get-selected-items/')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector("#selectionTable tbody");
+                tableBody.innerHTML = "";
+                data.selected_items.forEach((item) => {
+                    let row = `<tr data-id="${item.id}">
+                        <td class="col-store">${item.store}</td>
+                        <td class="col-category">${item.category}</td>
+                        <td class="col-description">${item.description}</td>
+                        <td class="col-price-sale">${item.price}</td>
+                        <td class="col-actions">
+                            <input type="checkbox" class="item-checkbox" onclick="updateTotal()">
+                            <button class="btn btn-move" onclick="moveUp(this)">↑</button>
+                            <button class="btn btn-move" onclick="moveDown(this)">↓</button>
+                            <button class="btn btn-delete" onclick="removeItem(this)">X</button>
+                        </td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+                updateTotal();
+            });
+    }
+
+    function updateTotal() {
+        let total = 0;
+        document.querySelectorAll(".item-checkbox:checked").forEach(checkbox => {
+            let row = checkbox.closest("tr");
+            total += parseFloat(row.querySelector(".col-price-sale").textContent) || 0;
+        });
+        document.getElementById("total-price").textContent = total;
+    }
+
+    function updateSelection() {
+        let updatedList = [];
+        document.querySelectorAll("#selectionTable tbody tr").forEach(row => {
+            updatedList.push({
+                id: row.getAttribute("data-id"),
+                store: row.querySelector(".col-store").textContent,
+                category: row.querySelector(".col-category").textContent,
+                description: row.querySelector(".col-description").textContent,
+                price: row.querySelector(".col-price-sale").textContent
+            });
+        });
+
+        fetch("/submit-selection/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ orderedList: updatedList })
+        });
+    }
+
+    function clearSelection() {
+        if (confirm("確定要清除所有已選擇的零件嗎？")) {
+            fetch("/clear-selection/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("清除成功！");
+                    loadSelectedItems();
+                }
+            });
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        loadSelectedItems();
+    });
+
+    function moveUp(btn) {
+        let row = btn.closest("tr");
+        if (row.previousElementSibling) {
+            row.parentNode.insertBefore(row, row.previousElementSibling);
+        }
+        updateSelection();
+    }
+
+    function moveDown(btn) {
+        let row = btn.closest("tr");
+        if (row.nextElementSibling) {
+            row.parentNode.insertBefore(row.nextElementSibling, row);
+        }
+        updateSelection();
+    }
+
+    function removeItem(btn) {
+        let row = btn.closest("tr");
+        row.remove();
+        updateSelection();
+    }
+</script>

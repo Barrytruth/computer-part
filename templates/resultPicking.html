@@ -1,0 +1,147 @@
+<div class="simple-page-container">
+    <h2 style="text-align: center;">篩選結果</h2>
+    <form method="POST" action="/submit-selection/" id="selection-form">
+        {% csrf_token %}
+        <table class="result-table">
+            <thead>
+                <tr>
+                    <th class="column-select">選擇</th>
+                    <th class="column-store">店家</th>
+                    <th class="column-category">分類</th>
+                    <th class="column-description">商品敘述</th>
+                    <th class="column-price-original">原價</th>
+                    <th class="column-discount-period">優惠期限</th>
+                    <th class="column-price-sale">售價</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if results and results|length > 0 %}
+                    {% for result in results %}
+                    <tr data-id="{{ result.id }}"
+                        data-store="{{ result.store }}"
+                        data-category="{{ result.category }}"
+                        data-description="{{ result.description }}"
+                        data-orgprice="{{ result.orgPrice }}"
+                        data-saleend="{{ result.saleEnd }}"
+                        data-price="{{ result.price }}">
+                        <td class="column-select">
+                            <input type="checkbox" name="selected_items" value="{{ result.id }}">
+                        </td>
+                        <td class="column-store">{{ result.store }}</td>
+                        <td class="column-category">{{ result.category }}</td>
+                        <td class="column-description">{{ result.description }}</td>
+                        <td class="column-price-original">{{ result.orgPrice }}</td>
+                        <td class="column-discount-period">{{ result.saleEnd }}</td>
+                        <td class="column-price-sale">{{ result.price }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="no-results">目前無篩選結果。</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <button type="button" class="submit-button" onclick="submitSelection()">提交選擇</button>
+    </form>
+</div>
+
+<style>
+    .column-select { width: 3%; }
+    .column-store { width: 4%; }
+    .column-category { width: 8%; }
+    th.column-description {text-align: center; }
+    .column-description { width: 68%; text-align: left; padding-left: 1em; }
+    .column-price-original { width: 5%; }
+    .column-discount-period { width: 7%; }
+    th.column-price-sale {text-align: center; }
+    .column-price-sale { width: 5%; text-align: right; padding-right: 1em; }
+
+    .submit-button {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        
+        background-image: url('/staticfiles/images/button_02.jpg');  /* 設定背景圖片 */
+        background-size: cover;  /* 讓圖片填滿按鈕 */
+        background-position: center;  /* 讓圖片置中 */
+        background-repeat: no-repeat;  /* 不要重複圖片 */
+        
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* 讓文字有陰影，避免看不清楚 */
+        
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    /* 滑鼠懸停時的效果 */
+    .submit-button:hover {
+        opacity: 0.8;  /* 讓按鈕稍微變暗 */
+    }
+</style>
+
+<script>
+    function getCurrentSelectionList() {
+        let selectionList = [];
+        document.querySelectorAll("#selectionTable tbody tr").forEach(row => {
+            selectionList.push({
+                id: row.dataset.id,
+                store: row.cells[0].textContent,
+                category: row.cells[1].textContent,
+                description: row.cells[2].textContent,
+                price: row.cells[3].textContent
+            });
+        });
+        return selectionList;
+    }
+
+    function submitSelection() {
+        const selectedItems = [];
+
+        // ✅ 讀取勾選的篩選結果
+        document.querySelectorAll('input[name="selected_items"]:checked').forEach(input => {
+            let row = input.closest("tr");
+            selectedItems.push({
+                id: row.dataset.id,
+                store: row.dataset.store,
+                category: row.dataset.category,
+                description: row.dataset.description,
+                price: row.dataset.price
+            });
+        });
+
+        if (selectedItems.length === 0) {
+            alert("請至少選擇一個項目！");
+            return;
+        }
+
+        // ✅ 讀取目前 selectionLST.html 中已選擇的項目
+        let orderedList = getCurrentSelectionList();
+        
+        // ✅ 傳送新的篩選結果 + 目前已選擇的清單到後端
+        fetch("/submit-selection/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ 
+                selected_items: selectedItems,  // 新勾選的篩選結果
+                orderedList: orderedList       // 目前的選擇清單
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert("提交成功！");
+                loadSelectedItems(); // 更新已選擇清單
+            } else {
+                alert("提交失敗，請稍後再試！");
+            }
+        })
+        .catch(error => console.error("發生錯誤:", error));
+    }
+</script>

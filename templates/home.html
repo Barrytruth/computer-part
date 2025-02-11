@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>電腦零組件篩選表單</h1>
+
+<!-- 篩選表單 -->
+<form action="/filter/" method="POST">
+    {% csrf_token %}
+    <table>
+        <thead>
+            <tr>
+                <th class="category-column">分類</th>
+                <th class="brand-column">品牌</th>
+                <th class="spec-column" colspan="4">規格</th>
+                <th class="result-column">篩選結果</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr id="filter-row">
+                <td class="category-column">
+                    <select id="category-select" name="category" onchange="loadCategoryOptions(this.value)">
+                        <option value="">請選擇分類</option>
+                        {% for category in specifications.keys %}
+                        <option value="{{ category }}">{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td class="brand-column">
+                    <select name="brand" id="brand-select">
+                        <option value="">選擇品牌</option>
+                    </select>
+                </td>
+                <!-- 保留小鍵盤功能 -->
+                <td class="spec-column" id="spec-column-1"></td>
+                <td class="spec-column" id="spec-column-2"></td>
+                <td class="spec-column" id="spec-column-3"></td>
+                <td class="spec-column" id="spec-column-4"></td>
+                <td class="result-column">
+                    <button type="submit">篩選</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+
+<!-- 嵌入篩選結果 -->
+<div>
+    {% include "resultPicking.html" %}
+</div>
+
+<!-- 新增嵌入選擇清單 -->
+<div>
+    {% include "selectionLST.html" %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const specifications = {{ specifications|safe }};
+    const unitOptions = {{ unit_options|safe }};
+
+    // 保留動態生成小鍵盤邏輯
+    function loadCategoryOptions(category) {
+        const brandSelect = document.getElementById('brand-select');
+        const specColumns = [
+            document.getElementById('spec-column-1'),
+            document.getElementById('spec-column-2'),
+            document.getElementById('spec-column-3'),
+            document.getElementById('spec-column-4'),
+        ];
+
+        brandSelect.innerHTML = '<option value="">選擇品牌</option>';
+        specColumns.forEach((column) => (column.innerHTML = ''));
+
+        if (!category || !specifications[category]) {
+            console.error("分類無效或未找到對應數據");
+            return;
+        }
+
+        const specs = specifications[category];
+        specs["品牌"].forEach((brand) => {
+            brandSelect.innerHTML += `<option value="${brand}">${brand}</option>`;
+        });
+
+        let specIndex = 0;
+        for (let specKey in specs) {
+            if (specKey === "品牌") continue;
+
+            const specColumn = specColumns[specIndex];
+            specIndex++;
+
+            if (unitOptions[category] && unitOptions[category][specKey]) {
+                const input = document.createElement("input");
+                input.type = "text";
+                input.name = specKey;
+                input.placeholder = `選擇 ${specKey}`;
+                input.className = "dropdown-input";
+                input.readOnly = true;
+                input.onclick = () => toggleDropdown(input, category, specKey);
+
+                const dropdownPanel = document.createElement("div");
+                dropdownPanel.className = "dropdown-panel";
+
+                dropdownPanel.innerHTML = `
+                    <label>條件：</label>
+                    <select id="range-operator">
+                        <option value="">請選擇條件</option>
+                        <option value="greater">大於</option>
+                        <option value="less">小於</option>
+                    </select>
+                    <label>數值：</label>
+                    <input type="number" id="range-value" min="0">
+                    <label>單位：</label>
+                    <select id="unit-selector">
+                        <option value="">請選擇單位</option>
+                        ${unitOptions[category][specKey]
+                            .map((unit) => `<option value="${unit}">${unit}</option>`)
+                            .join("")}
+                    </select>
+                    <button class="confirm" onclick="applyRange(event, '${specKey}', this)">確認</button>
+                    <button class="cancel" onclick="closeDropdown(event)">取消</button>
+                `;
+                specColumn.appendChild(input);
+                specColumn.appendChild(dropdownPanel);
+            } else {
+                const select = document.createElement("select");
+                select.name = specKey;
+                select.innerHTML = `<option value="">選擇 ${specKey}</option>`;
+                specs[specKey].forEach((value) => {
+                    select.innerHTML += `<option value="${value}">${value}</option>`;
+                });
+                specColumn.appendChild(select);
+            }
+        }
+    }
+
+    function toggleDropdown(inputElement) {
+        const dropdownPanel = inputElement.nextElementSibling;
+        dropdownPanel.style.display = "block";
+    }
+
+    function closeDropdown(event) {
+        event.preventDefault();
+        const dropdownPanel = event.target.closest('.dropdown-panel');
+        dropdownPanel.style.display = "none";
+    }
+
+    function applyRange(event, specKey, buttonElement) {
+        event.preventDefault();
+        const dropdownPanel = buttonElement.closest('.dropdown-panel');
+        const operator = dropdownPanel.querySelector('#range-operator').value;
+        const value = dropdownPanel.querySelector('#range-value').value;
+        const unit = dropdownPanel.querySelector('#unit-selector').value;
+        const rangeValue = `${operator === 'greater' ? '>' : '<'} ${value} ${unit}`;
+        const inputElement = dropdownPanel.previousElementSibling;
+        inputElement.value = rangeValue;
+        dropdownPanel.style.display = "none";
+    }
+</script>
+{% endblock %}
