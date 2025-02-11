@@ -1,10 +1,10 @@
-beautifulsoup4==4.12.3
-Django==5.1.2
-django-heroku==0.3.1
+Django==4.2.16
 pandas==2.2.3
-selenium==4.25.0
+beautifulsoup4==4.9.3
+selenium==4.27.1
 Jinja2==2.11.2
 
-gunicorn
+gunicorn==23.0.0
+django-heroku==0.3.1
 mysqlclient
 dj-database-url
