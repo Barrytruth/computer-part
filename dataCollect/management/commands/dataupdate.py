@@ -77,6 +77,17 @@ class Command(BaseCommand):
             result = self.data_clean()
             print(result)
         
+        elif options["update"] == "auto":
+            partList.objects.all().delete()
+            self.coolpc_update()
+            print("----- coolpc crawling DONE ")
+            self.newton_update()        
+            print("----- newton crawling DONE ")
+            result = self.data_parse()
+            print(result)
+            result = self.data_clean()
+            print(result)
+        
         elif options["test"] == "opt_prep":
             dbtest()
         else:
