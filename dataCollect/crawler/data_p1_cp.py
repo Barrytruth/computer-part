@@ -2,7 +2,7 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
+# from selenium.webdriver.chrome.service import Service
 import os
 import pandas as pd
 import re
@@ -16,7 +16,8 @@ def setup_driver():
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
-    chrome_service = Service(os.environ.get("CHROMEDRIVER_PATH"))
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    # chrome_service = Service(os.environ.get("CHROMEDRIVER_PATH"))
     return webdriver.Chrome(service=chrome_service, options=chrome_options)
 
 def cateDescide(cateStr):
