@@ -110,11 +110,11 @@ if __name__ == "__main__":
         brand, height, hUnit, pipe, direct = heatsinkInfo("coolpc",i,j)
         if brand == "NG" or height == "NG" or hUnit == "NG" or pipe == "NG" or direct == "NG":
             continue
-        print(brand,end=" \ ")
-        print(height+hUnit,end=" \ ")
-        print(pipe,end=" \ ")
-        print(direct,end=" \ ")
-        # print(silence,end=" \ ")
+        print(brand,end=" \\ ")
+        print(height+hUnit,end=" \\ ")
+        print(pipe,end=" \\ ")
+        print(direct,end=" \\ ")
+        # print(silence,end=" \\ ")
         k += 1
         print(k)
         # if k == 120:

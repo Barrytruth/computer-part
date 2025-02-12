@@ -100,10 +100,10 @@ if __name__ == "__main__":
         brand, size, gside, silence = caseInfo("coolpc",i,j)
         if brand == "NG" or size == "NG" or gside == "NG" or silence == "NG":
             continue
-        print(brand,end=" \ ")
-        print(size,end=" \ ")
-        print(gside,end=" \ ")
-        print(silence,end=" \ ")
-        # print(rpm,end=" \ ")
+        print(brand,end=" \\ ")
+        print(size,end=" \\ ")
+        print(gside,end=" \\ ")
+        print(silence,end=" \\ ")
+        # print(rpm,end=" \\ ")
         k += 1
         print(k)

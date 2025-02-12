@@ -105,10 +105,10 @@ if __name__ == "__main__":
             continue
         if vchip == "RTX4080 SUPER":
             print("debug",end="---")
-        print(brand,end=" \ ")
-        print(camp,end=" \ ")
-        print(vchip,end=" \ ")
-        print(length+lenUnit,end=" \ ")
-        print(gddr+gddrUnit,end=" \ ")
+        print(brand,end=" \\ ")
+        print(camp,end=" \\ ")
+        print(vchip,end=" \\ ")
+        print(length+lenUnit,end=" \\ ")
+        print(gddr+gddrUnit,end=" \\ ")
         k += 1
         print(k)

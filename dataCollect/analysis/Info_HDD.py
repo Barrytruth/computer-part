@@ -95,10 +95,10 @@ if __name__ == "__main__":
         brand, size, use, capacity, capUnit, rpm = hddInfo("coolpc", i,j)
         if brand == "NG" or size == "NG" or use == "NG" or capacity == "NG" or capUnit == "NG" or rpm == "NG":
             continue
-        print(brand,end=" \ ")
-        print(size,end=" \ ")
-        print(use,end=" \ ")
-        print(capacity+capUnit,end=" \ ")
-        print(rpm,end=" \ ")
+        print(brand,end=" \\ ")
+        print(size,end=" \\ ")
+        print(use,end=" \\ ")
+        print(capacity+capUnit,end=" \\ ")
+        print(rpm,end=" \\ ")
         k += 1
         print(k)

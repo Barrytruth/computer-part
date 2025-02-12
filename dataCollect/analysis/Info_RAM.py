@@ -152,10 +152,10 @@ if __name__ == "__main__":
         brand, dimm, channel, capacity, capUnit = ramInfo("newton", i,j)
         if brand == "NG" or dimm == "NG" or channel == "NG" or capacity == "NG" or capUnit == "NG":
             continue
-        print(brand,end=" \ ")
-        print(dimm,end=" \ ")
-        print(channel,end=" \ ")
-        print(str(capacity)+capUnit,end=" \ ")
-        # print(size,end=" \ ")
+        print(brand,end=" \\ ")
+        print(dimm,end=" \\ ")
+        print(channel,end=" \\ ")
+        print(str(capacity)+capUnit,end=" \\ ")
+        # print(size,end=" \\ ")
         k += 1
         print(k)

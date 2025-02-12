@@ -89,11 +89,11 @@ if __name__ == "__main__":
         brand, gen, socket, model, gpu_in, fan = cpuInfo("coolpc",i,j)
         if brand == "NG" or gen == "NG" or socket == "NG" or model == "NG" or gpu_in == "NG" or fan == "NG":
             continue
-        print(brand,end=" \ ")
-        print(gen,end=" \ ")
-        print(socket,end=" \ ")
-        print(model,end=" \ ")
-        print(gpu_in,end=" \ ")
-        print(fan,end=" \ ")
+        print(brand,end=" \\ ")
+        print(gen,end=" \\")
+        print(socket,end=" \\ ")
+        print(model,end=" \\ ")
+        print(gpu_in,end=" \\ ")
+        print(fan,end=" \\ ")
         k += 1
         print(k)

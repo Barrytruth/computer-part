@@ -80,10 +80,10 @@ if __name__ == "__main__":
         brand, interface, capacity, capUnit = ssdInfo("coolpc", i,j)
         if brand == "NG" or interface == "NG" or capacity == "NG" or capUnit == "NG":
             continue
-        print(brand,end=" \ ")
-        print(interface,end=" \ ")
-        print(capacity+capUnit,end=" \ ")
-        # print(socket,end=" \ ")
-        # print(size,end=" \ ")
+        print(brand,end=" \\ ")
+        print(interface,end=" \\ ")
+        print(capacity+capUnit,end=" \\ ")
+        # print(socket,end=" \\ ")
+        # print(size,end=" \\ ")
         k += 1
         print(k)

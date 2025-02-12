@@ -115,10 +115,10 @@ if __name__ == "__main__":
         brand, walt, waltUnit, grade, modular, silence = psuInfo("coolpc",i,j)
         if brand == "NG" or walt == "NG" or waltUnit == "NG" or grade == "NG" or modular == "NG" or silence == "NG":
             continue
-        print(brand,end=" \ ")
-        print(walt+waltUnit,end=" \ ")
-        print(grade,end=" \ ")
-        print(modular,end=" \ ")
-        print(silence,end=" \ ")
+        print(brand,end=" \\ ")
+        print(walt+waltUnit,end=" \\ ")
+        print(grade,end=" \\ ")
+        print(modular,end=" \\ ")
+        print(silence,end=" \\ ")
         k += 1
         print(k)

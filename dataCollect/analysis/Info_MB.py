@@ -104,10 +104,10 @@ if __name__ == "__main__":
         brand, chipset, dimm, socket, size = mbInfo("coolpc",i,j)
         if brand == "NG" or chipset == "NG" or dimm == "NG" or socket == "NG" or size == "NG":
             continue
-        print(brand,end=" \ ")
-        print(chipset,end=" \ ")
-        print(dimm,end=" \ ")
-        print(socket,end=" \ ")
-        print(size,end=" \ ")
+        print(brand,end=" \\ ")
+        print(chipset,end=" \\ ")
+        print(dimm,end=" \\ ")
+        print(socket,end=" \\ ")
+        print(size,end=" \\ ")
         k += 1
         print(k)
