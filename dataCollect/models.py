@@ -35,4 +35,4 @@ class autoupdateLog(models.Model):
     updateResult = models.CharField(max_length=16, blank=True)
 
     def __str__(self):
-        return f"{self.id} - {self.datetime} - {self.updateResult}"
+        return f"{self.id} - {self.dateTime} - {self.updateResult}"
