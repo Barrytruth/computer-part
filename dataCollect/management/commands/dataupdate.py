@@ -123,8 +123,11 @@ class Command(BaseCommand):
                       "dataParse":dataParse,"dataClean":dataClean,"updateResult":updateResult}
             for i in result:
                 print(f"{i}:"+str(result[i]))
-            log_result = autoupdateLog.objects.create(dateTime=date_time,weekDay=weekday,coolpcUpdate=coolpcUpdate,newtonUpdate=newtonUpdate,
-                                         dataParse=dataParse,dataClean=dataClean,updateResult=updateResult)
-            print(log_result)
+            try:
+                log_result = autoupdateLog.objects.create(dateTime=date_time,weekDay=weekday,coolpcUpdate=coolpcUpdate,newtonUpdate=newtonUpdate,
+                                            dataParse=dataParse,dataClean=dataClean,updateResult=updateResult)
+                print(log_result)
+            except Exception as e:
+                print("儲存失敗:", e)
         else:
             print("ERR")
