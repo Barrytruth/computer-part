@@ -85,6 +85,7 @@ class Command(BaseCommand):
             date_time = datetime.now(tz)
             weekday = date_time.date().weekday() # 0 = 週一, 1 = 週二 ...
             # 資料更新
+            partList.objects.all().delete()
             if weekday == 2 or weekday == 5:
                 partList.objects.all().delete()
                 try:
