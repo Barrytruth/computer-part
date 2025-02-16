@@ -115,10 +115,14 @@ class Command(BaseCommand):
             # result and saving log
             if coolpcUpdate == "Success" and newtonUpdate == "Success" and dataParse == "Success" and dataClean == "Success":
                 updateResult = "Update Done"
+            elif coolpcUpdate == "--------" and newtonUpdate == "--------" and dataParse == "--------" and dataClean == "--------":
+                updateResult = "--------"
             else:
                 updateResult = "Failed"
-            # result = {"dateTime":date_time,"weekDay":weekday,"coolpcUpdate":coolpcUpdate,"newtonUpdate":newtonUpdate,
-            #           "dataParse":dataParse,"dataClean":dataClean,"updateResult":updateResult}
+            result = {"dateTime":date_time,"weekDay":weekday,"coolpcUpdate":coolpcUpdate,"newtonUpdate":newtonUpdate,
+                      "dataParse":dataParse,"dataClean":dataClean,"updateResult":updateResult}
+            for i in result:
+                print(f"{i}:"+str(result[i]))
             autoupdateLog.objects.create(dateTime=date_time,weekDay=weekday,coolpcUpdate=coolpcUpdate,newtonUpdate=newtonUpdate,
                                          dataParse=dataParse,dataClean=dataClean,updateResult=updateResult)
         else:
